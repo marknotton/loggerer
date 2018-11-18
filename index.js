@@ -10,86 +10,80 @@
 
 // Dependencies
 const chalk = require('chalk');
+let themes = require('./lib/themes.json');
 
-let logs = [];
-let legacy = [];
-
-// Configurable Options
-var defaults = {
-  cache : false,
-  limit : 299,
+// Configurable settings
+let options = {
+	theme      : 'one-dark',
+  cache      : false,
+  limit      : 299,
   timestamps : true,
+	extensions : {
+	 js    : ['js', 'json'],
+	 image : ['tif', 'tiff', 'gif', 'jpeg', 'jpg', 'bmp', 'png', 'webp', 'svg'],
+	 css   : ['sass', 'scss', 'css', 'less'],
+	 html  : ['html', 'twig'],
+	 php   : ['php'],
+ }
 };
 
-// =============================================================================
-// Themes
-// =============================================================================
-
-let themes = {
-	default : ['#61AEEF', '#91C379', '#708284']
-}
-
-let types = {
-	created  : '#F0DB4F',
-	updated  : '#7DB704',
-	skipped  : '#E6A41F',
-	deleted  : '#E06859',
-	complete : '#61AEEF',
-}
-
-let files = {
-	js    : '#7DB704',
-	image : '#F0DB4F',
-	css   : '#C76395',
-	html  : '#E6A41F',
-	php   : '#5737A4',
-}
-
-// =============================================================================
-// File tu[es]
-// =============================================================================
-
-const extensions = {
-	js    : ['js', 'json'],
-	image : ['tif', 'tiff', 'gif', 'jpeg', 'jpg', 'bmp', 'png', 'webp', 'svg'],
-	css   : ['sass', 'scss', 'css', 'less'],
-	html  : ['html', 'twig'],
-	php   : ['php'],
-}
+let _logs = [];
+let _legacy = [];
+let _theme = themes[options.theme];
 
 // =============================================================================
 // Public Methods
 // =============================================================================
 
 module.exports           = log;
-module.exports.timestamp = timestamp;
+module.exports.get       = get;
+module.exports.time      = time;
 module.exports.clear     = clear;
-// module.exports.legacy    = legacy;
+module.exports.settings  = settings;
+module.exports.legacy    = legacy;
+
+// =============================================================================
+// Define default settings
+// =============================================================================
+
+function settings(settings) {
+  options = Object.assign(options, settings);
+	if ( typeof options.theme == 'string' ) {
+		_theme = themes[options.theme]
+	}
+}
 
 // Return a timestamp ==========================================================
 
-function timestamp() {
+function time() {
 	return `[${(new Date()).toTimeString().substr(0,8)}]`;
 }
 
 // Output all legacy logs ======================================================
 
-// function legacy() {
-// 	render(legacy);
-// }
+function legacy(output = false) {
+	if ( output ) {
+		render(_legacy);
+	}
+	return _legacy;
+}
+
+function get() {
+	return _logs;
+}
 
 // Empty the current log =======================================================
 
 function clear() {
 
 	// IF the legacy logs has too many elements, start shifting the first item on each clear.
-	if (legacy.length > defaults.limit) {
-		legacy.shift()
+	if (_legacy.length > options.limit) {
+		_legacy.shift()
 	}
 
-	legacy.push(logs)
+	_legacy.push(_logs)
 
-	logs = []
+	_logs = []
 
 }
 
@@ -99,97 +93,72 @@ function log(...args) {
 
 	if (!args) { return false }
 
-	let _type      = null,
-			_file      = null,
-			_note      = null,
-			_theme     = [],
-			_cache     = defaults.cache,
-			_timestamp = defaults.timestamps;
+	// Arguments passed as an object
 
-	args.forEach(arg => {
-		switch(typeof arg) {
-			case 'boolean':
-				if      ( !_cache ) { _cache = arg }
-				else if ( !_timestamp ) { _timestamp = arg }
-			break;
-			case 'array':
-				if      ( !_type )  { _type = arg[0]; _theme.push(arg[1]) }
-				else if ( !_file )  { _file = arg[0]; _theme.push(arg[1]) }
-				else if ( !_note )  { _note = arg[0]; _theme.push(arg[1]) }
-				else if ( !_theme ) { _theme = arg }
-			case 'string':
-				if ( Object.keys(themes).includes(arg) ) {
-					_theme = themes[arg];
-				} else {
-					if      ( !_type )  { _type = arg }
-					else if ( !_file )  { _file = arg }
-					else if ( !_note )  { _note = arg }
-				}
-			break;
-		}
-	})
+	if ( typeof args[0] == 'object') {
 
-	if ( !_theme.length ) {
+		var {type = null, file = null, note = null, cache = null, timestamp = null, theme = []} = args[0]
 
-		if ( _type ) {
-			let key = _type.replace(/\s+/g, '-').toLowerCase();
-			if ( Object.keys(types).includes(key) ) {
-				_theme.push(types[key])
+	} else {
+
+		// Maange Arguments
+
+		var messages  = [],
+				cache     = null,
+				timestamp = null,
+				theme     = [];
+
+		args.forEach(arg => {
+			switch(typeof(arg)) {
+				case 'boolean':
+					if      ( cache == null ) { cache = arg }
+					else if ( timestamp == null ) { timestamp = arg }
+				break;
+				case 'object':
+					if ( theme.length == 0 ) {
+						theme = { 'colours' : arg }
+						// theme = arg
+					}
+				case 'string':
+					if ( Object.keys(themes).includes(arg) ) {
+						theme = arg
+					} else if ( typeof arg == 'string') {
+						messages.push(arg)
+					}
+				break;
 			}
-		}
-
-		if ( _file ) {
-			let regex = /(?:\.([^.]+))?$/;
-			let extension = regex.exec(_file)[1];
-			let index = Object.values(extensions).findIndex(element => {
-				return element.includes(extension);
-			})
-			let key = Object.keys(extensions)[index];
-			if ( Object.keys(files).includes(key) ) {
-				_theme.push(files[key])
-			}
-		}
-
-		// if ( _note ) {
-		// 	_theme.push(types[key])
-		// }
+		})
 	}
 
-	// Make sure the theme has exactly 3 colours.
-
-	switch(_theme.length) {
-		case 0:
-			_theme = themes.default;
-		break;
-		case 1:
-			_theme = [ _theme[0], themes.default[1], themes.default[2] ]
-		break;
-		case 2:
-			_theme = [ _theme[0], _theme[1], themes.default[2] ]
-		break;
+	if (!messages.length) {
+		return false;
 	}
 
-	// Add a ! marker to the timestamp if it shouldn't be rendered. But we'll store it anyway
+	// Booleans fallback
 
-	_timestamp = _timestamp ? timestamp() : `!${timestamp()}`
+	if ( cache == null ) { cache = options.cache }
+	if ( timestamp == null ) { timestamp = options.timestamps }
+	if ( theme.length == 0 ) { theme = options.theme }
 
-	// Prepare the output that will be both rendered out or stored
+	timestamp = timestamp ? time() : `!${time()}`;
+
+	// Prepare output data for a few potential options...
 
 	let output = {
-		type      : _type,
-		file      : _file,
-		note      : _note,
-		theme     : _theme,
-		timestamp : _timestamp
+		'messages'  : messages,
+		'cache'     : cache,
+		'timestamp' : timestamp,
+		'theme'     : theme
 	}
 
 	// Store the log data
 
-	logs.push(output)
+	_logs.push(output);
+	_legacy.push(output);
 
 	// If caching is off, render out the output immediately
 
-	if (!_cache) {
+	if ( cache == false ) {
 		render([output])
 	}
 
@@ -203,38 +172,108 @@ function log(...args) {
 // Private Methods
 // =============================================================================
 
-function render(items = logs) {
+function render(logs = _logs) {
 
-	if (!items.length) { return false }
+	if (!logs.length) { return false }
 
-	items.forEach(item => {
+	let regex = /(?:\.([^.]+))?$/;
 
-		let timestamp = item.timestamp ? chalk.hex(item.theme[2])(item.timestamp) + ' ' : '';
-		let type      = item.type      ? chalk.hex(item.theme[0])(item.type + ': ')     : '';
-		let file      = item.file      ? chalk.hex(item.theme[1])(item.file) + ' '      : '';
-		let note      = item.note      ? chalk.hex('- ' + item.theme[2])(item.note)     : '';
+	logs.forEach(log => {
 
-		// var longest = befores.reduce(function (a, b) { return a.length > b.length ? a : b; });
+		// console.log(log);
 
-		// Object.entries(item).forEach(([key, value]) => {
+		let lengths = log.messages.map(message => message.length);
+		let results = log.timestamp.charAt() == '!' ? '' : log.timestamp + ' ';
+		let theme = null;
 
+		// Theme management ========================================================
 
-		//
-		// 	console.log(data);
-		//
-			let log = `${timestamp}${type}${file}${note}`
-		//
-			console.log(log)
-		//
-		// })
+		if ( typeof log.theme == 'string' && Object.keys(themes).includes(log.theme) ) {
+			theme = themes[log.theme];
+		} else if (typeof log.theme == 'object') {
 
+			// Clone the default theme
+			let clone = Object.assign({}, _theme);
+
+			if (Object.keys(log.theme).length == 1 && typeof log.theme['colours'] !== 'undefined') {
+				// If the theme was set with just an array of colours, merge the remaining
+				// theme properties with the default one.
+				clone['colours'] = log.theme['colours'];
+			}
+
+			theme = clone;
+
+		} else {
+			theme = Object.assign({}, _theme);
+		}
+
+		// Message management ======================================================
+
+		log.messages.forEach((message, index) => {
+
+			// File type chcker ------------------------------------------------------
+
+			// Check if message has a file extension
+			let extension = regex.exec(message)[1];
+			let colour = theme.colours[index] || false;
+
+			if ( typeof extension !== 'undefined') {
+
+				// Determine what category the extension fits into and return in the extensions index
+				let index = Object.values(options.extensions).findIndex(element => {
+					return element.includes(extension);
+				})
+				// Use the index get the category name
+				let key = Object.keys(options.extensions)[index];
+
+				if ( Object.keys(theme.files).includes(key) ) {
+					results = results + stylise(message, theme.files[key]) + ' ';
+				} else {
+					results = results + stylise(message, colour) + ' ';
+				}
+			}
+
+			// Keyword checker -------------------------------------------------------
+
+			else if ( Object.keys(theme.keywords).includes(message) ) {
+				results = results + stylise(message + ': ', theme.keywords[message]);
+			}
+
+			// Defualt ---------------------------------------------------------------
+
+			else {
+				results = results + stylise(message, colour) + ' ';
+			}
+
+		})
+
+		if ( results !== '') {
+
+			console.log(results);
+
+		}
+
+	// 	// var longest = befores.reduce(function (a, b) { return a.length > b.length ? a : b; });
+	//
+	// 	// Object.entries(item).forEach(([key, value]) => {
+	//
+	//
+	// 	//
+	// 	// 	console.log(data);
+	// 	//
+	// 		let log = `${timestamp}${type}${file}${note}`
+	// 	//
+	// 		console.log(_log)
+	// 	//
+	// 	// })
+	//
 	})
+}
 
-	// let key = arg[1].replace(/\s+/g, '-').toLowerCase();
-	// if ( Object.keys(types).includes(key) ) {
-	// 	_theme.push(types[key])
-	// } else {
-	// 	_theme.push(arg[1])
-	// }
-
+function stylise(message, colour) {
+	if ( colour ) {
+		return chalk.hex(colour)(message);
+	} else {
+		return message;
+	}
 }

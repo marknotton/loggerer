@@ -1,0 +1,146 @@
+{
+	"atom-dark" : {
+		"colours" : ["#C6C5FE","#91CB99","#EDEDE5"],
+		"keywords" : {
+			"Created"  : "#F0DB4F",
+			"Updated"  : "#7DB704",
+			"Skipped"  : "#E6A41F",
+			"Deleted"  : "#E06859",
+			"Complete" : "#61AEEF"
+		},
+		"files" : {
+			"js"    : "#7DB704",
+			"image" : "#F0DB4F",
+			"css"   : "#C76395",
+			"html"  : "#E6A41F",
+			"php"   : "#5737A4"
+		}
+	},
+
+	"atom-light" : {
+		"colours" : ["#187E9D","#4A2121","#786AA1"],
+		"keywords" : {
+			"Created"  : "#F0DB4F",
+			"Updated"  : "#7DB704",
+			"Skipped"  : "#E6A41F",
+			"Deleted"  : "#E06859",
+			"Complete" : "#61AEEF"
+		},
+		"files" : {
+			"js"    : "#7DB704",
+			"image" : "#F0DB4F",
+			"css"   : "#C76395",
+			"html"  : "#E6A41F",
+			"php"   : "#5737A4"
+		}
+	},
+
+	"base16-dark" : {
+		"colours" : ["#CC6666","#D7935F","#BFBEB0"],
+		"keywords" : {
+			"Created"  : "#F0DB4F",
+			"Updated"  : "#7DB704",
+			"Skipped"  : "#E6A41F",
+			"Deleted"  : "#E06859",
+			"Complete" : "#61AEEF"
+		},
+		"files" : {
+			"js"    : "#7DB704",
+			"image" : "#F0DB4F",
+			"css"   : "#C76395",
+			"html"  : "#E6A41F",
+			"php"   : "#5737A4"
+		}
+	},
+
+	"base16-light" : {
+		"colours" : ["#D67565","#DE925F","#701C1F"],
+		"keywords" : {
+			"Created"  : "#F0DB4F",
+			"Updated"  : "#7DB704",
+			"Skipped"  : "#E6A41F",
+			"Deleted"  : "#E06859",
+			"Complete" : "#61AEEF"
+		},
+		"files" : {
+			"js"    : "#7DB704",
+			"image" : "#F0DB4F",
+			"css"   : "#C76395",
+			"html"  : "#E6A41F",
+			"php"   : "#5737A4"
+		}
+	},
+
+	"one-dark" : {
+		"colours" : ["#E06D65","#56B6BC"],
+		"keywords" : {
+			"Created"  : "#F0DB4F",
+			"Updated"  : "#7DB704",
+			"Skipped"  : "#E6A41F",
+			"Deleted"  : "#E06859",
+			"Complete" : "#61AEEF"
+		},
+		"files" : {
+			"js"    : "#7DB704",
+			"image" : "#F0DB4F",
+			"css"   : "#C76395",
+			"html"  : "#E6A41F",
+			"php"   : "#5737A4"
+		}
+	},
+
+	"one-light" : {
+		"colours" : ["#E5555C","#1F84BF","#A16800"],
+		"keywords" : {
+			"Created"  : "#F0DB4F!!!",
+			"Updated"  : "#7DB704!!!",
+			"Skipped"  : "#E6A41F!!!",
+			"Deleted"  : "#E06859!!!",
+			"Complete" : "#61AEEF!!!"
+		},
+		"files" : {
+			"js"    : "#7DB704",
+			"image" : "#F0DB4F",
+			"css"   : "#C76395",
+			"html"  : "#E6A41F",
+			"php"   : "#5737A4"
+		}
+	},
+
+	"solarized-dark" : {
+		"colours" : ["#829175","#7C9903","#82958C"],
+		"keywords" : {
+			"Created"  : "#F0DB4F",
+			"Updated"  : "#7DB704",
+			"Skipped"  : "#E6A41F",
+			"Deleted"  : "#E06859",
+			"Complete" : "#61AEEF"
+		},
+		"files" : {
+			"js"    : "#7DB704",
+			"image" : "#F0DB4F",
+			"css"   : "#C76395",
+			"html"  : "#E6A41F",
+			"php"   : "#5737A4"
+		}
+	},
+
+	"solarized-light" : {
+		"colours" : ["#6F9DAD","#8B9901","#6E8695"],
+		"keywords" : {
+			"Created"  : "#F0DB4F",
+			"Updated"  : "#7DB704",
+			"Skipped"  : "#E6A41F",
+			"Deleted"  : "#E06859",
+			"Complete" : "#61AEEF"
+		},
+		"files" : {
+			"js"    : "#7DB704",
+			"image" : "#F0DB4F",
+			"css"   : "#C76395",
+			"html"  : "#E6A41F",
+			"php"   : "#5737A4"
+		}
+	}
+
+}
