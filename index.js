@@ -18,6 +18,10 @@ let options = {
   cache      : false,
   limit      : 299,
   timestamps : true,
+  space      : true,
+  spacer     : ' ',
+  seperator  : ' ',
+  suffix     : ':',
 	extensions : {
 	 js    : ['js', 'json'],
 	 image : ['tif', 'tiff', 'gif', 'jpeg', 'jpg', 'bmp', 'png', 'webp', 'svg'],
@@ -36,6 +40,7 @@ let _theme = themes[options.theme];
 // =============================================================================
 
 module.exports           = log;
+module.exports.render    = render;
 module.exports.get       = get;
 module.exports.time      = time;
 module.exports.clear     = clear;
@@ -84,6 +89,8 @@ function clear() {
 	_legacy.push(_logs)
 
 	_logs = []
+
+	console.log('logs cleared');
 
 }
 
@@ -172,18 +179,69 @@ function log(...args) {
 // Private Methods
 // =============================================================================
 
-function render(logs = _logs) {
+// Calculate spacers to words ==================================================
+
+function spacers(logs) {
+
+	let matrix = []
+
+	logs.forEach(log => {
+		matrix.push(log.messages.map(message => message.length));
+	})
+
+	let longestArray = matrix[matrix.reduce((p, c, i, a) => a[p].length > c.length ? p : i, 0)].length;
+
+	let longests = [];
+	let botrix = [];
+
+	for(let i = 0 ; i < longestArray; i++){
+		let ggg = [];
+	  matrix.forEach(mat => {
+			ggg.push(mat[i] || 0)
+		})
+		var longest = ggg.reduce((a, b) => a > b ? a : b)
+		longests.push(longest)
+		// botrix.push(ggg)
+	}
+
+	matrix.forEach(mat => {
+		let hhh = mat.map((a, i) => longests[i] - a)
+		botrix.push(hhh)
+	})
+
+	// console.log(botrix)
+	// console.log(matrix)
+	// console.log(longests)
+
+	// var longest = befores.reduce(function (a, b) { return a.length > b.length ? a : b; });
+
+	let result = botrix;
+
+	return result;
+
+}
+
+// Render out the logs =========================================================
+
+function render(logs = _logs, clearAfterRender = false) {
+
+	// If the first argument is a boolean and is true,
+	// define the ClearAfterRender to true and use the global _logs
+	if ( typeof logs == 'boolean' && logs === true ) {
+		logs = _logs;
+		clearAfterRender = true;
+	}
 
 	if (!logs.length) { return false }
 
-	let regex = /(?:\.([^.]+))?$/;
+	if ( options.space && options.cache == true ) {
+		var spaces = spacers(logs);
+	}
 
-	logs.forEach(log => {
 
-		// console.log(log);
+	logs.forEach((log, i) => {
 
-		let lengths = log.messages.map(message => message.length);
-		let results = log.timestamp.charAt() == '!' ? '' : log.timestamp + ' ';
+		let results = log.timestamp.charAt() == '!' ? '' : log.timestamp + options.seperator;
 		let theme = null;
 
 		// Theme management ========================================================
@@ -208,13 +266,15 @@ function render(logs = _logs) {
 		}
 
 		// Message management ======================================================
+		let s = spaces[i];
 
 		log.messages.forEach((message, index) => {
+
 
 			// File type chcker ------------------------------------------------------
 
 			// Check if message has a file extension
-			let extension = regex.exec(message)[1];
+			let extension = /(?:\.([^.]+))?$/.exec(message)[1];
 			let colour = theme.colours[index] || false;
 
 			if ( typeof extension !== 'undefined') {
@@ -227,23 +287,29 @@ function render(logs = _logs) {
 				let key = Object.keys(options.extensions)[index];
 
 				if ( Object.keys(theme.files).includes(key) ) {
-					results = results + stylise(message, theme.files[key]) + ' ';
+					results = results + stylise(message, theme.files[key])// + options.seperator;
 				} else {
-					results = results + stylise(message, colour) + ' ';
+					results = results + stylise(message, colour)// + options.seperator;
 				}
 			}
 
 			// Keyword checker -------------------------------------------------------
 
 			else if ( Object.keys(theme.keywords).includes(message) ) {
-				results = results + stylise(message + ': ', theme.keywords[message]);
+				results = results + stylise(message + options.suffix, theme.keywords[message])// + options.seperator;
 			}
 
 			// Defualt ---------------------------------------------------------------
 
 			else {
-				results = results + stylise(message, colour) + ' ';
+				results = results + stylise(message, colour)// + options.seperator;
 			}
+
+
+			// let amount = s[index];
+			let amount = parseInt(s[index]);
+			amount = amount < 1 ? 0 : amount/options.spacer.length;
+			results = results + options.spacer.repeat(amount) + (index + 1 != log.messages.length ? options.seperator : '');
 
 		})
 
@@ -268,12 +334,56 @@ function render(logs = _logs) {
 	// 	// })
 	//
 	})
+
+	if ( clearAfterRender ) {
+		clear()
+	}
+
+}
+
+// Manage the styling ==========================================================
+
+const regexes = {
+	rgb     : /^rgb[(](?:\s*0*(?:\d\d?(?:\.\d+)?(?:\s*%)?|\.\d+\s*%|100(?:\.0*)?\s*%|(?:1\d\d|2[0-4]\d|25[0-5])(?:\.\d+)?)\s*(?:,(?![)])|(?=[)]))){3}[)]$/g,
+	hex     : /(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)/i,
+	keyword : /black|red|green|yellow|blue|magenta|cyan|white|gray|redBright|greenBright|yellowBright|blueBright|magentaBright|cyanBright|whiteBright/g,
+	hsl     : /^hsl[(]\s*0*(?:[12]?\d{1,2}|3(?:[0-5]\d|60))\s*(?:\s*,\s*0*(?:\d\d?(?:\.\d+)?\s*%|\.\d+\s*%|100(?:\.0*)?\s*%)){2}\s*[)]$/g,
 }
 
 function stylise(message, colour) {
+
 	if ( colour ) {
-		return chalk.hex(colour)(message);
-	} else {
-		return message;
+
+		let type = null;
+
+		Object.values(regexes).forEach((regex, index) => {
+			if (regex.test(colour)) {
+				type = Object.keys(regexes)[index];
+			}
+		})
+
+		switch (type) {
+	    case 'keyword':
+        message = chalk[colour](message)
+      break;
+	    case 'rgb':
+				var match = /rgb\((\d{1,3}), (\d{1,3}), (\d{1,3})\)/.exec(colour);
+				if (match !== null) {
+					message = chalk.rgb(match[1], match[2], match[3])(message);
+				}
+      break;
+	    case 'hex':
+        message = chalk.hex(colour)(message);
+      break;
+	    case 'hsl':
+				var match = /hsl\((\d{1,3}), (\d{1,3}), (\d{1,3})\)/.exec(colour);
+				if (match !== null) {
+					message = chalk.hsl(match[1], match[2], match[3])(message);
+				}
+      break;
+		}
+
 	}
+
+	return message;
 }
