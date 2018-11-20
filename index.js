@@ -9,8 +9,8 @@
 'use strict'
 
 // Dependencies
-const chalk = require('chalk');
-let themes = require('./lib/themes.json');
+const chalk = require('chalk')
+let themes = require('./lib/themes.json')
 
 // Configurable settings
 let options = {
@@ -18,8 +18,9 @@ let options = {
   cache      : false,
   limit      : 299,
   timestamps : true,
+  inline     : false,
   space      : true,
-  spacer     : ' ',
+  spacer     : '-',
   seperator  : ' ',
   suffix     : ':',
 	extensions : {
@@ -29,30 +30,30 @@ let options = {
 	 html  : ['html', 'twig'],
 	 php   : ['php'],
  }
-};
+}
 
-let _logs = [];
-let _legacy = [];
-let _theme = themes[options.theme];
+let _logs = []
+let _legacy = []
+let _theme = themes[options.theme]
 
 // =============================================================================
 // Public Methods
 // =============================================================================
 
-module.exports           = log;
-module.exports.render    = render;
-module.exports.get       = get;
-module.exports.time      = time;
-module.exports.clear     = clear;
-module.exports.settings  = settings;
-module.exports.legacy    = legacy;
+module.exports           = log
+module.exports.render    = render
+module.exports.get       = get
+module.exports.time      = time
+module.exports.clear     = clear
+module.exports.settings  = settings
+module.exports.legacy    = legacy
 
 // =============================================================================
 // Define default settings
 // =============================================================================
 
 function settings(settings) {
-  options = Object.assign(options, settings);
+  options = Object.assign(options, settings)
 	if ( typeof options.theme == 'string' ) {
 		_theme = themes[options.theme]
 	}
@@ -61,20 +62,20 @@ function settings(settings) {
 // Return a timestamp ==========================================================
 
 function time() {
-	return `[${(new Date()).toTimeString().substr(0,8)}]`;
+	return `[${(new Date()).toTimeString().substr(0,8)}]`
 }
 
 // Output all legacy logs ======================================================
 
 function legacy(output = false) {
 	if ( output ) {
-		render(_legacy);
+		render(_legacy)
 	}
-	return _legacy;
+	return _legacy
 }
 
 function get() {
-	return _logs;
+	return _logs
 }
 
 // Empty the current log =======================================================
@@ -89,8 +90,6 @@ function clear() {
 	_legacy.push(_logs)
 
 	_logs = []
-
-	console.log('logs cleared');
 
 }
 
@@ -113,18 +112,17 @@ function log(...args) {
 		var messages  = [],
 				cache     = null,
 				timestamp = null,
-				theme     = [];
+				theme     = []
 
 		args.forEach(arg => {
 			switch(typeof(arg)) {
 				case 'boolean':
 					if      ( cache == null ) { cache = arg }
 					else if ( timestamp == null ) { timestamp = arg }
-				break;
+				break
 				case 'object':
 					if ( theme.length == 0 ) {
 						theme = { 'colours' : arg }
-						// theme = arg
 					}
 				case 'string':
 					if ( Object.keys(themes).includes(arg) ) {
@@ -132,13 +130,13 @@ function log(...args) {
 					} else if ( typeof arg == 'string') {
 						messages.push(arg)
 					}
-				break;
+				break
 			}
 		})
 	}
 
 	if (!messages.length) {
-		return false;
+		return false
 	}
 
 	// Booleans fallback
@@ -147,7 +145,7 @@ function log(...args) {
 	if ( timestamp == null ) { timestamp = options.timestamps }
 	if ( theme.length == 0 ) { theme = options.theme }
 
-	timestamp = timestamp ? time() : `!${time()}`;
+	timestamp = timestamp ? time() : `!${time()}`
 
 	// Prepare output data for a few potential options...
 
@@ -160,8 +158,8 @@ function log(...args) {
 
 	// Store the log data
 
-	_logs.push(output);
-	_legacy.push(output);
+	_logs.push(output)
+	_legacy.push(output)
 
 	// If caching is off, render out the output immediately
 
@@ -171,7 +169,7 @@ function log(...args) {
 
 	// Return the output, just for fun.
 
-	return output;
+	return output
 
 }
 
@@ -183,156 +181,120 @@ function log(...args) {
 
 function spacers(logs) {
 
-	let matrix = []
+	// Get a an array of arrays relecting the size of each message in each log.
+	let matrix = logs.map(log => log.messages.map(message => message.length))
 
-	logs.forEach(log => {
-		matrix.push(log.messages.map(message => message.length));
-	})
+	// Get length of of th longest array within matrix, so we known how many
+	// loops we need to do later on.
+	let loops = matrix[matrix.reduce((p, c, i, a) => a[p].length > c.length ? p : i, 0)].length
 
-	let longestArray = matrix[matrix.reduce((p, c, i, a) => a[p].length > c.length ? p : i, 0)].length;
+	// Comparing each array of log message lengths, run through them in columns
+	// to return a single array of the longest items for each column of text.
+	let longests = [...Array(loops)].map((m, i) => matrix.map(m => m[i] || 0).reduce((a, b) => a > b ? a : b))
 
-	let longests = [];
-	let botrix = [];
-
-	for(let i = 0 ; i < longestArray; i++){
-		let ggg = [];
-	  matrix.forEach(mat => {
-			ggg.push(mat[i] || 0)
-		})
-		var longest = ggg.reduce((a, b) => a > b ? a : b)
-		longests.push(longest)
-		// botrix.push(ggg)
-	}
-
-	matrix.forEach(mat => {
-		let hhh = mat.map((a, i) => longests[i] - a)
-		botrix.push(hhh)
-	})
-
-	// console.log(botrix)
-	// console.log(matrix)
-	// console.log(longests)
-
-	// var longest = befores.reduce(function (a, b) { return a.length > b.length ? a : b; });
-
-	let result = botrix;
-
-	return result;
+	// Refer the array of longests messages and associate that back to the original matrix
+  return matrix.map(m => m.map((a, i) => longests[i] - a))
 
 }
 
 // Render out the logs =========================================================
 
-function render(logs = _logs, clearAfterRender = false) {
+function render(logs = _logs, clearAfterRender = true) {
+
 
 	// If the first argument is a boolean and is true,
 	// define the ClearAfterRender to true and use the global _logs
-	if ( typeof logs == 'boolean' && logs === true ) {
-		logs = _logs;
-		clearAfterRender = true;
+	if ( typeof logs == 'boolean' && logs === false ) {
+		logs = _logs
+		clearAfterRender = false
 	}
 
 	if (!logs.length) { return false }
 
-	if ( options.space && options.cache == true ) {
-		var spaces = spacers(logs);
-	}
-
-
 	logs.forEach((log, i) => {
 
-		let results = log.timestamp.charAt() == '!' ? '' : log.timestamp + options.seperator;
-		let theme = null;
+		let results = log.timestamp.charAt() == '!' ? '' : log.timestamp + options.seperator
+		let theme = null
 
 		// Theme management ========================================================
 
 		if ( typeof log.theme == 'string' && Object.keys(themes).includes(log.theme) ) {
-			theme = themes[log.theme];
+			theme = themes[log.theme]
 		} else if (typeof log.theme == 'object') {
 
 			// Clone the default theme
-			let clone = Object.assign({}, _theme);
+			let clone = Object.assign({}, _theme)
 
 			if (Object.keys(log.theme).length == 1 && typeof log.theme['colours'] !== 'undefined') {
 				// If the theme was set with just an array of colours, merge the remaining
 				// theme properties with the default one.
-				clone['colours'] = log.theme['colours'];
+				clone['colours'] = log.theme['colours']
 			}
 
-			theme = clone;
+			theme = clone
 
 		} else {
-			theme = Object.assign({}, _theme);
+			theme = Object.assign({}, _theme)
 		}
 
 		// Message management ======================================================
-		let s = spaces[i];
 
-		log.messages.forEach((message, index) => {
-
+		log.messages.forEach((message, l) => {
 
 			// File type chcker ------------------------------------------------------
 
 			// Check if message has a file extension
-			let extension = /(?:\.([^.]+))?$/.exec(message)[1];
-			let colour = theme.colours[index] || false;
+			let extension = /(?:\.([^.]+))?$/.exec(message)[1]
+			let colour = theme.colours[l] || false
 
 			if ( typeof extension !== 'undefined') {
 
 				// Determine what category the extension fits into and return in the extensions index
 				let index = Object.values(options.extensions).findIndex(element => {
-					return element.includes(extension);
+					return element.includes(extension)
 				})
 				// Use the index get the category name
-				let key = Object.keys(options.extensions)[index];
+				let key = Object.keys(options.extensions)[index]
 
 				if ( Object.keys(theme.files).includes(key) ) {
-					results = results + stylise(message, theme.files[key])// + options.seperator;
+					results = results + stylise(message, theme.files[key])
 				} else {
-					results = results + stylise(message, colour)// + options.seperator;
+					results = results + stylise(message, colour)
 				}
 			}
 
 			// Keyword checker -------------------------------------------------------
 
 			else if ( Object.keys(theme.keywords).includes(message) ) {
-				results = results + stylise(message + options.suffix, theme.keywords[message])// + options.seperator;
+				results = results + stylise(message + options.suffix, theme.keywords[message])
 			}
 
 			// Defualt ---------------------------------------------------------------
 
 			else {
-				results = results + stylise(message, colour)// + options.seperator;
+				results = results + stylise(message, colour)
 			}
 
+			// Final checks
 
-			// let amount = s[index];
-			let amount = parseInt(s[index]);
-			amount = amount < 1 ? 0 : amount/options.spacer.length;
-			results = results + options.spacer.repeat(amount) + (index + 1 != log.messages.length ? options.seperator : '');
+			let lastLoop = l + 1 == log.messages.length;
+
+			if ( options.space && options.inline == true && options.cache == true ) {
+				let spaces = spacers(logs)
+				let amount = spaces[i][l] < 1 ? 0 : ((spaces[i][l]/options.spacer.length) - options.seperator.length)
+				// console.log(amount, results.length, message.length);
+				amount = amount > 30 ? 1 : amount;
+				results = results + (options.spacer == ' ' && options.seperator == ' ' ? '' : options.seperator) + (!lastLoop ? options.spacer.repeat(amount) : '')
+			}
+
+			results = results + (!lastLoop ? options.seperator : '')
 
 		})
 
 		if ( results !== '') {
-
-			console.log(results);
-
+			console.log(results)
 		}
 
-	// 	// var longest = befores.reduce(function (a, b) { return a.length > b.length ? a : b; });
-	//
-	// 	// Object.entries(item).forEach(([key, value]) => {
-	//
-	//
-	// 	//
-	// 	// 	console.log(data);
-	// 	//
-	// 		let log = `${timestamp}${type}${file}${note}`
-	// 	//
-	// 		console.log(_log)
-	// 	//
-	// 	// })
-	//
 	})
 
 	if ( clearAfterRender ) {
@@ -354,36 +316,36 @@ function stylise(message, colour) {
 
 	if ( colour ) {
 
-		let type = null;
+		let type = null
 
 		Object.values(regexes).forEach((regex, index) => {
 			if (regex.test(colour)) {
-				type = Object.keys(regexes)[index];
+				type = Object.keys(regexes)[index]
 			}
 		})
 
 		switch (type) {
 	    case 'keyword':
         message = chalk[colour](message)
-      break;
+      break
 	    case 'rgb':
-				var match = /rgb\((\d{1,3}), (\d{1,3}), (\d{1,3})\)/.exec(colour);
+				var match = /rgb\((\d{1,3}), (\d{1,3}), (\d{1,3})\)/.exec(colour)
 				if (match !== null) {
-					message = chalk.rgb(match[1], match[2], match[3])(message);
+					message = chalk.rgb(match[1], match[2], match[3])(message)
 				}
-      break;
+      break
 	    case 'hex':
-        message = chalk.hex(colour)(message);
-      break;
+        message = chalk.hex(colour)(message)
+      break
 	    case 'hsl':
-				var match = /hsl\((\d{1,3}), (\d{1,3}), (\d{1,3})\)/.exec(colour);
+				var match = /hsl\((\d{1,3}), (\d{1,3}), (\d{1,3})\)/.exec(colour)
 				if (match !== null) {
-					message = chalk.hsl(match[1], match[2], match[3])(message);
+					message = chalk.hsl(match[1], match[2], match[3])(message)
 				}
-      break;
+      break
 		}
 
 	}
 
-	return message;
+	return message
 }

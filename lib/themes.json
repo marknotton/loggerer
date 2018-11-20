@@ -92,11 +92,11 @@
 	"one-light" : {
 		"colours" : ["#E5555C","#1F84BF","#A16800"],
 		"keywords" : {
-			"Created"  : "#F0DB4F!!!",
-			"Updated"  : "#7DB704!!!",
-			"Skipped"  : "#E6A41F!!!",
-			"Deleted"  : "#E06859!!!",
-			"Complete" : "#61AEEF!!!"
+			"Created"  : "#F0DB4F",
+			"Updated"  : "#7DB704",
+			"Skipped"  : "#E6A41F",
+			"Deleted"  : "#E06859",
+			"Complete" : "#61AEEF"
 		},
 		"files" : {
 			"js"    : "#7DB704",
