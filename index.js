@@ -15,7 +15,7 @@ let themes = require('./lib/themes.json')
 // Configurable settings
 let options = {
 	theme      : 'one-dark',
-  cache      : false,
+  cache      : true,
   limit      : 299,
   timestamps : true,
   inline     : false,
@@ -247,7 +247,7 @@ function render(logs = _logs, clearAfterRender = true) {
 			let extension = /(?:\.([^.]+))?$/.exec(message)[1]
 			let colour = theme.colours[l] || false
 
-			if ( typeof extension !== 'undefined') {
+			if ( typeof extension !== 'undefined' && options.extensions != false) {
 
 				// Determine what category the extension fits into and return in the extensions index
 				let index = Object.values(options.extensions).findIndex(element => {
@@ -282,7 +282,6 @@ function render(logs = _logs, clearAfterRender = true) {
 			if ( options.space && options.inline == true && options.cache == true ) {
 				let spaces = spacers(logs)
 				let amount = spaces[i][l] < 1 ? 0 : ((spaces[i][l]/options.spacer.length) - options.seperator.length)
-				// console.log(amount, results.length, message.length);
 				amount = amount > 30 ? 1 : amount;
 				results = results + (options.spacer == ' ' && options.seperator == ' ' ? '' : options.seperator) + (!lastLoop ? options.spacer.repeat(amount) : '')
 			}
