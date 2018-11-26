@@ -19,10 +19,9 @@ let options = {
   limit      : 299,
   timestamps : true,
   inline     : false,
-  space      : true,
-  spacer     : '-',
   seperator  : ' ',
   suffix     : ':',
+	spacer    : '--------------------------------------------',
 	extensions : {
 	 js    : ['js', 'json'],
 	 image : ['tif', 'tiff', 'gif', 'jpeg', 'jpg', 'bmp', 'png', 'webp', 'svg'],
@@ -103,7 +102,7 @@ function log(...args) {
 
 	if ( typeof args[0] == 'object') {
 
-		var {type = null, file = null, note = null, cache = null, timestamp = null, theme = []} = args[0]
+		var {type = null, file = null, note = null, cache = null, spacer = null, timestamp = null, theme = []} = args[0]
 
 	} else {
 
@@ -176,26 +175,6 @@ function log(...args) {
 // =============================================================================
 // Private Methods
 // =============================================================================
-
-// Calculate spacers to words ==================================================
-
-function spacers(logs) {
-
-	// Get a an array of arrays relecting the size of each message in each log.
-	let matrix = logs.map(log => log.messages.map(message => message.length))
-
-	// Get length of of th longest array within matrix, so we known how many
-	// loops we need to do later on.
-	let loops = matrix[matrix.reduce((p, c, i, a) => a[p].length > c.length ? p : i, 0)].length
-
-	// Comparing each array of log message lengths, run through them in columns
-	// to return a single array of the longest items for each column of text.
-	let longests = [...Array(loops)].map((m, i) => matrix.map(m => m[i] || 0).reduce((a, b) => a > b ? a : b))
-
-	// Refer the array of longests messages and associate that back to the original matrix
-  return matrix.map(m => m.map((a, i) => longests[i] - a))
-
-}
 
 // Render out the logs =========================================================
 
@@ -279,13 +258,6 @@ function render(logs = _logs, clearAfterRender = true) {
 
 			let lastLoop = l + 1 == log.messages.length;
 
-			if ( options.space && options.inline == true && options.cache == true ) {
-				let spaces = spacers(logs)
-				let amount = spaces[i][l] < 1 ? 0 : ((spaces[i][l]/options.spacer.length) - options.seperator.length)
-				amount = amount > 30 ? 1 : amount;
-				results = results + (options.spacer == ' ' && options.seperator == ' ' ? '' : options.seperator) + (!lastLoop ? options.spacer.repeat(amount) : '')
-			}
-
 			results = results + (!lastLoop ? options.seperator : '')
 
 		})
@@ -295,6 +267,11 @@ function render(logs = _logs, clearAfterRender = true) {
 		}
 
 	})
+
+	// if ( spacer && options.spacer ) {
+	// 	console.log(options.spacer)
+	// }
+
 
 	if ( clearAfterRender ) {
 		clear()

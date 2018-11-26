@@ -1,6 +1,6 @@
 {
 	"atom-dark" : {
-		"colours" : ["#C6C5FE","#91CB99","#EDEDE5"],
+		"colours" : ["#96CBFE","#C5C1D9"],
 		"keywords" : {
 			"Created"  : "#F0DB4F",
 			"Updated"  : "#7DB704",
@@ -18,7 +18,7 @@
 	},
 
 	"atom-light" : {
-		"colours" : ["#187E9D","#4A2121","#786AA1"],
+		"colours" : ["#9F0000","#147F8C"],
 		"keywords" : {
 			"Created"  : "#F0DB4F",
 			"Updated"  : "#7DB704",
@@ -36,7 +36,7 @@
 	},
 
 	"base16-dark" : {
-		"colours" : ["#CC6666","#D7935F","#BFBEB0"],
+		"colours" : ["#B19692","#7BA2BE"],
 		"keywords" : {
 			"Created"  : "#F0DB4F",
 			"Updated"  : "#7DB704",
@@ -54,7 +54,7 @@
 	},
 
 	"base16-light" : {
-		"colours" : ["#D67565","#DE925F","#701C1F"],
+		"colours" : ["#B393CD","#8DA2BE"],
 		"keywords" : {
 			"Created"  : "#F0DB4F",
 			"Updated"  : "#7DB704",
@@ -72,7 +72,7 @@
 	},
 
 	"one-dark" : {
-		"colours" : ["#E06D65","#56B6BC"],
+		"colours" : ["#5DAEEF", "#C573BD"],
 		"keywords" : {
 			"Created"  : "#F0DB4F",
 			"Updated"  : "#7DB704",
@@ -90,7 +90,7 @@
 	},
 
 	"one-light" : {
-		"colours" : ["#E5555C","#1F84BF","#A16800"],
+		"colours" : ["#4078F3","#E4564A"],
 		"keywords" : {
 			"Created"  : "#F0DB4F",
 			"Updated"  : "#7DB704",
@@ -108,7 +108,7 @@
 	},
 
 	"solarized-dark" : {
-		"colours" : ["#829175","#7C9903","#82958C"],
+		"colours" : ["#208DB4","#849902"],
 		"keywords" : {
 			"Created"  : "#F0DB4F",
 			"Updated"  : "#7DB704",
@@ -126,7 +126,7 @@
 	},
 
 	"solarized-light" : {
-		"colours" : ["#6F9DAD","#8B9901","#6E8695"],
+		"colours" : ["#849902","#268ED6"],
 		"keywords" : {
 			"Created"  : "#F0DB4F",
 			"Updated"  : "#7DB704",
