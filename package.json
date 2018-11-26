@@ -1,6 +1,6 @@
 {
   "name": "loggerer",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Your standard CLI console logger, with some caching and styling options",
   "main": "index.js",
   "scripts": {
