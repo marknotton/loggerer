@@ -1,22 +1,25 @@
 {
-  "name": "loggerer",
-  "version": "1.0.1",
-  "description": "Your standard CLI console logger, with some caching and styling options",
+  "name": "@marknotton/lumberjack",
+  "version": "1.0.0",
+  "description": "CLI console logger, with some caching and themable options",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/marknotton/loggerer.git"
+    "url": "git+https://github.com/marknotton/lumberjack.git"
   },
   "dependencies": {
     "chalk": "^2.3.1"
   },
+	"keywords": [
+    "gulp"
+  ],
   "author": "Mark Notton",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/marknotton/loggerer/issues"
+    "url": "https://github.com/marknotton/lumberjack/issues"
   },
-  "homepage": "https://github.com/marknotton/loggerer"
+  "homepage": "https://github.com/marknotton/lumberjack"
 }
