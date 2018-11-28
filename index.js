@@ -18,8 +18,7 @@ let options = {
   cache      : true,
   limit      : 299,
   timestamps : true,
-  inline     : false,
-  seperator  : ' ',
+  separator  : ' ',
   suffix     : ':',
 	spacer    : '--------------------------------------------',
 	extensions : {
@@ -192,7 +191,7 @@ function render(logs = _logs, clearAfterRender = true) {
 
 	logs.forEach((log, i) => {
 
-		let results = log.timestamp.charAt() == '!' ? '' : log.timestamp + options.seperator
+		let results = log.timestamp.charAt() == '!' ? '' : log.timestamp + options.separator
 		let theme = null
 
 		// Theme management ========================================================
@@ -258,7 +257,7 @@ function render(logs = _logs, clearAfterRender = true) {
 
 			let lastLoop = l + 1 == log.messages.length;
 
-			results = results + (!lastLoop ? options.seperator : '')
+			results = results + (!lastLoop ? options.separator : '')
 
 		})
 
