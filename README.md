@@ -1,6 +1,6 @@
 # Lumberjack
 
-![Made For NPM](https://img.shields.io/badge/Made%20for-NPM-#CB3837.svg)
+![Made For NPM](https://img.shields.io/badge/Made%20for-NPM-orange.svg)
 
 CLI console logger, with some caching and theming options
 
