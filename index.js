@@ -18,7 +18,9 @@ let options = {
   cache      : true,
   limit      : 299,
   timestamps : true,
-  separator  : ' ',
+  inline     : false,
+  seperator  : ' ',
+	delay      : 300,
   suffix     : ':',
 	spacer    : '--------------------------------------------',
 	extensions : {
@@ -191,7 +193,7 @@ function render(logs = _logs, clearAfterRender = true) {
 
 	logs.forEach((log, i) => {
 
-		let results = log.timestamp.charAt() == '!' ? '' : log.timestamp + options.separator
+		let results = log.timestamp.charAt() == '!' ? '' : log.timestamp + options.seperator
 		let theme = null
 
 		// Theme management ========================================================
@@ -257,19 +259,23 @@ function render(logs = _logs, clearAfterRender = true) {
 
 			let lastLoop = l + 1 == log.messages.length;
 
-			results = results + (!lastLoop ? options.separator : '')
+			results = results + (!lastLoop ? options.seperator : '')
 
 		})
 
 		if ( results !== '') {
-			console.log(results)
+			if (options.delay && typeof options.delay == 'number') {
+				setTimeout(() => { console.log(results)}, options.delay);
+			} else {
+				console.log(results)
+			}
 		}
 
 	})
 
-	// if ( spacer && options.spacer ) {
-	// 	console.log(options.spacer)
-	// }
+	if ( typeof options.spacer == 'string' && options.spacer.length ) {
+		console.log(options.spacer)
+	}
 
 
 	if ( clearAfterRender ) {

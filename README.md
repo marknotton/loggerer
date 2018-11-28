@@ -46,9 +46,10 @@ See the full list of options are below.
 | cache      | true | Boolean | This will cache all your logs and not actually output anything into your CLI until you run the render() function. Setting this to `false` will output logs immediately.
 | limit      | 299 | Number | Despite clearing the logs. Legacy logs are never deleted. If the this limit is reached, logs will be shifted and the oldest logs will be deleted permanently.
 | timestamps | true | Boolean | Omit timestamps from your logs. Timestamps will still be stored in your legacy cache.
+| delay | 300 | Number | Delay the amount of time the rendering should take. Helps to keep all the logs at the bottom of your CLI, skipping all the other gumph.
 | separator  | ' ' | String | Each log segment will be separated with this string.
 | suffix     | ':' | String | Keywords will be suffixed with this string.
-| spacer     | '-' (x80) | String | **[Coming Soon]** Spacers will output a decorative line at the start of each new render.
+| spacer     | '-' (x80) | String | Spacers will output a decorative line at the start of each new render.
 | extensions | See below | Object | You may want to introduction new file types for more theming options.
 
 ### File Extensions
