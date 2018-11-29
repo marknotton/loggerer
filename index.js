@@ -99,41 +99,30 @@ function log(...args) {
 
 	if (!args) { return false }
 
-	// Arguments passed as an object
+	var messages  = [],
+			cache     = null,
+			timestamp = null,
+			theme     = []
 
-	if ( typeof args[0] == 'object') {
-
-		var {type = null, file = null, note = null, cache = null, spacer = null, timestamp = null, theme = []} = args[0]
-
-	} else {
-
-		// Maange Arguments
-
-		var messages  = [],
-				cache     = null,
-				timestamp = null,
-				theme     = []
-
-		args.forEach(arg => {
-			switch(typeof(arg)) {
-				case 'boolean':
-					if      ( cache == null ) { cache = arg }
-					else if ( timestamp == null ) { timestamp = arg }
-				break
-				case 'object':
-					if ( theme.length == 0 ) {
-						theme = { 'colours' : arg }
-					}
-				case 'string':
-					if ( Object.keys(themes).includes(arg) ) {
-						theme = arg
-					} else if ( typeof arg == 'string') {
-						messages.push(arg)
-					}
-				break
-			}
-		})
-	}
+	args.forEach(arg => {
+		switch(typeof(arg)) {
+			case 'boolean':
+				if      ( cache == null ) { cache = arg }
+				else if ( timestamp == null ) { timestamp = arg }
+			break
+			case 'object':
+				if ( theme.length == 0 ) {
+					theme = { 'colours' : arg }
+				}
+			case 'string':
+				if ( Object.keys(themes).includes(arg) ) {
+					theme = arg
+				} else if ( typeof arg == 'string') {
+					messages.push(arg)
+				}
+			break
+		}
+	})
 
 	if (!messages.length) {
 		return false
