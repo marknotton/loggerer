@@ -22,7 +22,7 @@ let options = {
   seperator  : ' ',
 	delay      : 300,
   suffix     : ':',
-	spacer    : '--------------------------------------------',
+	spacer    : '-',
 	extensions : {
 	 js    : ['js', 'json'],
 	 image : ['tif', 'tiff', 'gif', 'jpeg', 'jpg', 'bmp', 'png', 'webp', 'svg'],
@@ -99,30 +99,41 @@ function log(...args) {
 
 	if (!args) { return false }
 
-	var messages  = [],
-			cache     = null,
-			timestamp = null,
-			theme     = []
+	// Arguments passed as an object
 
-	args.forEach(arg => {
-		switch(typeof(arg)) {
-			case 'boolean':
-				if      ( cache == null ) { cache = arg }
-				else if ( timestamp == null ) { timestamp = arg }
-			break
-			case 'object':
-				if ( theme.length == 0 ) {
-					theme = { 'colours' : arg }
-				}
-			case 'string':
-				if ( Object.keys(themes).includes(arg) ) {
-					theme = arg
-				} else if ( typeof arg == 'string') {
-					messages.push(arg)
-				}
-			break
-		}
-	})
+	if ( typeof args[0] == 'object') {
+
+		var {type = null, file = null, note = null, cache = null, spacer = null, timestamp = null, theme = []} = args[0]
+
+	} else {
+
+		// Maange Arguments
+
+		var messages  = [],
+				cache     = null,
+				timestamp = null,
+				theme     = []
+
+		args.forEach(arg => {
+			switch(typeof(arg)) {
+				case 'boolean':
+					if      ( cache == null ) { cache = arg }
+					else if ( timestamp == null ) { timestamp = arg }
+				break
+				case 'object':
+					if ( theme.length == 0 ) {
+						theme = { 'colours' : arg }
+					}
+				case 'string':
+					if ( Object.keys(themes).includes(arg) ) {
+						theme = arg
+					} else if ( typeof arg == 'string') {
+						messages.push(arg)
+					}
+				break
+			}
+		})
+	}
 
 	if (!messages.length) {
 		return false
@@ -168,7 +179,7 @@ function log(...args) {
 
 // Render out the logs =========================================================
 
-function render(logs = _logs, clearAfterRender = true) {
+function render(logs = _logs, clearAfterRender = true, spacer = true) {
 
 
 	// If the first argument is a boolean and is true,
@@ -262,8 +273,8 @@ function render(logs = _logs, clearAfterRender = true) {
 
 	})
 
-	if ( typeof options.spacer == 'string' && options.spacer.length ) {
-		console.log(options.spacer)
+	if ( spacer && typeof options.spacer == 'string' && options.spacer.length ) {
+		console.log(' ' + options.spacer.repeat(44).slice(0, 44))
 	}
 
 

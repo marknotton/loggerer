@@ -37,7 +37,7 @@ Lumberjack will accept any number of parameters (segments). Different segments c
 | delay | 300 | Number | Delay the amount of time (in milliseconds) that the rendering should take before logging out messages. This helps to keep all the logs at the bottom of your CLI, skipping all the other gumph that might be thrown out.
 | separator  | ' ' | String | Each log segment will be separated with this string.
 | suffix     | ':' | String | Keywords will be suffixed with this string.
-| spacer     | '-' (x80) | String | Spacers will output a decorative line at the start of each new render.
+| spacer     | '-' | String | Spacers will output a decorative line at the start of each new render. This string will be repeated 44 times.
 | extensions | See below | Object | You may want to introduction new file types for more theming options.
 
 ## Defining your default settings
