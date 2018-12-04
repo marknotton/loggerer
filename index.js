@@ -22,7 +22,7 @@ let options = {
   seperator  : ' ',
 	delay      : 300,
   suffix     : ':',
-	spacer    : '-',
+	spacer    : false,
 	extensions : {
 	 js    : ['js', 'json'],
 	 image : ['tif', 'tiff', 'gif', 'jpeg', 'jpg', 'bmp', 'png', 'webp', 'svg'],
@@ -287,10 +287,10 @@ function render(logs = _logs, clearAfterRender = true, spacer = true) {
 // Manage the styling ==========================================================
 
 const regexes = {
-	rgb     : /^rgb[(](?:\s*0*(?:\d\d?(?:\.\d+)?(?:\s*%)?|\.\d+\s*%|100(?:\.0*)?\s*%|(?:1\d\d|2[0-4]\d|25[0-5])(?:\.\d+)?)\s*(?:,(?![)])|(?=[)]))){3}[)]$/g,
-	hex     : /(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)/i,
-	keyword : /black|red|green|yellow|blue|magenta|cyan|white|gray|redBright|greenBright|yellowBright|blueBright|magentaBright|cyanBright|whiteBright/g,
-	hsl     : /^hsl[(]\s*0*(?:[12]?\d{1,2}|3(?:[0-5]\d|60))\s*(?:\s*,\s*0*(?:\d\d?(?:\.\d+)?\s*%|\.\d+\s*%|100(?:\.0*)?\s*%)){2}\s*[)]$/g,
+	'rgb'     : /^rgb[(](?:\s*0*(?:\d\d?(?:\.\d+)?(?:\s*%)?|\.\d+\s*%|100(?:\.0*)?\s*%|(?:1\d\d|2[0-4]\d|25[0-5])(?:\.\d+)?)\s*(?:,(?![)])|(?=[)]))){3}[)]$/g,
+	'hex'     : /(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)/i,
+	'keyword' : /redBright|greenBright|yellowBright|blueBright|magentaBright|cyanBright|whiteBright|black|red|green|yellow|blue|magenta|cyan|white|gray/g,
+	'hsl'     : /^hsl[(]\s*0*(?:[12]?\d{1,2}|3(?:[0-5]\d|60))\s*(?:\s*,\s*0*(?:\d\d?(?:\.\d+)?\s*%|\.\d+\s*%|100(?:\.0*)?\s*%)){2}\s*[)]$/g,
 }
 
 function stylise(message, colour) {
@@ -299,11 +299,10 @@ function stylise(message, colour) {
 
 		let type = null
 
-		Object.values(regexes).forEach((regex, index) => {
-			if (regex.test(colour)) {
-				type = Object.keys(regexes)[index]
-			}
-		})
+		if      ( colour.match(regexes['rgb']) )     { type = 'rgb' }
+		else if ( colour.match(regexes['hex']) )     { type = 'hex' }
+		else if ( colour.match(regexes['keyword']) ) { type = 'keyword' }
+		else if ( colour.match(regexes['hsl']) )     { type = 'hsl' }
 
 		switch (type) {
 	    case 'keyword':
