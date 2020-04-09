@@ -4,7 +4,7 @@
 
 CLI console logger, with some caching and theming options
 
-![enter image description here](https://i.imgur.com/uaRWd0i.jpg)
+![sample](https://i.imgur.com/uaRWd0i.jpg)
 
 ## Installation
 ```
@@ -31,10 +31,10 @@ Lumberjack will accept any number of parameters (segments). Different segments c
 | Option | Default | Type | Description
 |--|--|--|--
 | theme      | 'one-dark' | String/Array | You can choose a predefined theme "atom-dark", "atom-light", "base16-dark", "base16-light", "one-dark", "one-light", "solarized-dark", "solarized-light". Or pass in your own as an associate array. See below for more information. Yes, these are referenced from Atoms own default theme library.
-| cache      | true | Boolean | This will cache all your logs and not actually output anything into your CLI until you run the render() function. Setting this to `false` will output logs immediately.
+| cache      | false | Boolean | This will cache all your logs and not actually output anything into your CLI until you run the render() function. Setting this to `false` will output logs immediately. Timestamps are from when the log was called, but when they are rendered. The purpose of this is to give you the option to output the logs at a later point. Remember, this isn't necessarily an error logger, just an aesthetic method for displaying data. 
 | limit      | 299 | Number | Despite clearing the logs. Legacy logs are never deleted. If the this limit is reached, logs will be shifted and the oldest logs will be deleted permanently.
 | timestamps | true | Boolean | Omit timestamps from your logs. Timestamps will still be stored in your legacy cache.
-| delay | 300 | Number | Delay the amount of time (in milliseconds) that the rendering should take before logging out messages. This helps to keep all the logs at the bottom of your CLI, skipping all the other gumph that might be thrown out.
+| delay      | 300 | Number | Delay the amount of time (in milliseconds) that the rendering should take before logging out messages. This helps to keep all the logs at the bottom of your CLI, skipping all the other gumph that might be thrown out.
 | separator  | ' ' | String | Each log segment will be separated with this string.
 | suffix     | ':' | String | Keywords will be suffixed with this string.
 | spacer     | false | String/Boolean | Spacers will output a decorative line at the start of each new render. This string will be repeated 44 times. `false` disables it entirely.
@@ -42,11 +42,11 @@ Lumberjack will accept any number of parameters (segments). Different segments c
 
 ## Defining your default settings
 
-You can define all your Lumberjack settings to be referenced by all instances globally.
+You can define all your Lumberjack settings like this:
 ```
 log.settings({
   theme : 'atom-light',
-  cache : false,
+  cache : true,
   seperator : ’ - ’
   ...
 });
@@ -66,7 +66,7 @@ If an segments string ends with a file extension matching one of these groups, t
 
 ### Keywords
 
-If an segments string contains a keyword (case sensitive) from the 'keywords' theme group, then the relative text colour will be applied to that section of the log. See theming below.
+If a segments string contains a keyword (case sensitive) from the 'keywords' theme group, then the relative text colour will be applied to that section of the log. See theming below.
 
 ```js
 log("Deleted", "/assets/images/logo.jpg", "and there's nothing you can do about it!")
@@ -76,6 +76,7 @@ The log segment "Deleted" matches a predefined keyword and will be output with a
 ### Theming
 
 You can create your own themes. They must follow this format:
+
 ```js
 "theme-name" : {
 	"colours" : ["#5DAEEF", "#C573BD"],
@@ -95,8 +96,9 @@ You can create your own themes. They must follow this format:
 	}
 }
 ```
+You can review all our themes [here](https://github.com/marknotton/lumberjack/blob/master/lib/themes.json)
 
-For every log segment a different text colour will be used depending on the themes colours array. If you have more segments than colours, no theme colour is applied. Theme colours are ignored if the string matches a keyword or file type.  
+For every segment in the log a different text colour will be used depending on the themes 'colours' array. If you have more segments than colours, no theme colour is applied. Theme colours are ignored if the string matches a keyword or file type.  
 
 Lumberjack is using [Chalk](https://www.npmjs.com/package/chalk) in the background. So you can use colours in the following formats rgb, hex, keywords or hsl.
 
@@ -134,7 +136,8 @@ log('Completed', 'All tasks are complete', 'foobar', ['red', '#1CA0F1', 'white']
 ```
 ![Log 1](https://i.imgur.com/996VbVF.jpg)
 
-Remember to render your logs, or disable caching to have them display immediately.
+Remember to render your logs if you have disabled caching.
+
 ## Render
 
 Output all cached logs. Timestamps are relative to the time they were stored, not at the time this render function is called.
@@ -145,7 +148,7 @@ log.render()
 
 You can pass in your own array of logs to be rendered out. By default, this will clear your log cache. Unless you pass in a `false` boolean.
 
-Lumberjack was initially designed to work with Gulp tasks to keep all the important logs at the end of your CLI after running a task. The idea is to avoid all your manually defined logs from being scattered all over the place with something like this:
+Lumberjack was initially designed to work with Gulp tasks to keep all the important logs at the end of your CLI after running a task. The idea is to avoid all your manually defined logs from being scattered all over the place by doing something like this:
 
 ```js
 return gulp.src([...])
@@ -174,4 +177,4 @@ All logs are stored in the Legacy cache regardless of wether caching is on or no
 ```js
 log.legacy()
 ```
-Passing in `true`  will render all of the legacy logs in one go.
+Passing in `true` will render all of the legacy logs in one go.

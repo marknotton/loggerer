@@ -15,7 +15,7 @@ let themes = require('./lib/themes.json')
 // Configurable settings
 let options = {
 	theme      : 'one-dark',
-  cache      : true,
+  cache      : false,
   limit      : 299,
   timestamps : true,
   inline     : false,

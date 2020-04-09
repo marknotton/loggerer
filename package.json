@@ -1,6 +1,6 @@
 {
   "name": "@marknotton/lumberjack",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "CLI console logger, with some caching and theming options",
   "main": "index.js",
   "scripts": {
@@ -11,13 +11,13 @@
     "url": "git+https://github.com/marknotton/lumberjack.git"
   },
   "dependencies": {
-    "chalk": "^2.3.1"
+    "chalk": "^4.0.0"
   },
-	"keywords": [
+  "keywords": [
     "gulp",
-		"logger",
-		"log",
-		"CLI"
+    "logger",
+    "log",
+    "CLI"
   ],
   "author": "Mark Notton",
   "license": "MIT",
